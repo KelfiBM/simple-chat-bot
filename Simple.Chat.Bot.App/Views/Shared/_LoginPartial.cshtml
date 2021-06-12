@@ -1,7 +1,8 @@
 @using Microsoft.AspNetCore.Identity
+@using Simple.Chat.Bot.App.Models
 
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
 
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
