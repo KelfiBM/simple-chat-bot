@@ -11,6 +11,7 @@ namespace Simple.Chat.Bot.App.Data
 {
   public class ApplicationDbContext : IdentityDbContext<User>
   {
+    public DbSet<ChatMessage> ChatMessages { get; set; }
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
@@ -19,9 +20,9 @@ namespace Simple.Chat.Bot.App.Data
     protected override void OnModelCreating(ModelBuilder builder)
     {
       base.OnModelCreating(builder);
-      // Customize the ASP.NET Identity model and override the defaults if needed.
-      // For example, you can rename the ASP.NET Identity table names and more.
-      // Add your customizations after calling base.OnModelCreating(builder);
+      builder.Entity<ChatMessage>().HasKey(x => x.Id);
+      builder.Entity<ChatMessage>().HasOne(x => x.User).WithMany(x => x.ChatMessages).IsRequired();
+      builder.Entity<User>().HasIndex(x => x.Nickname).IsUnique();
     }
   }
 }

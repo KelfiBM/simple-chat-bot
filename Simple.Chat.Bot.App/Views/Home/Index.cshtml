@@ -1,8 +1,49 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model List<Simple.Chat.Bot.App.ViewModels.ChatMessageViewModel>
+@{
+    ViewData["Title"] = "Chat Room";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="card">
+    <div class="card-header">
+        Welcome to Chat Room <b>@ViewData["Nickname"]</b>!
+    </div>
+    <ul id="chatList" class="list-group list-group-flush scroll">
+        @if (Model.Count > 0)
+        {
+            @foreach (var message in Model)
+            {
+                <li class="list-group-item">
+                    <div class="card-body">
+                        <h5 class="card-title">@(message.Nickname == (string) ViewData["Nickname"] ? "You" : message.Nickname)
+                        </h5>
+                        <h6 class="card-subtitle mb-2 text-muted">@message.DatePostedFormatted</h6>
+                        <p class="card-text">@message.Message</p>
+                    </div>
+                </li>
+            }
+        }
+        else
+        {
+            <div class="card-body">
+                <h5 class="card-title">Nothing to show</h5>
+            </div>
+        }
+    </ul>
+
+
+    <div class="card-footer text-muted">
+        <form class="input-group col-md-8 offset-md-2">
+            <textarea id="messageInput" class="form-control" rows="2" placeholder="Message" aria-label="Message"
+                aria-describedby="sendMessageButton" name="Message"></textarea>
+            <input id="nickNameInput" type="hidden" value='@ViewData["Nickname"]'>
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="submit" id="sendMessageButton">Send Message</button>
+            </div>
+        </form>
+    </div>
 </div>
+
+@section Scripts {
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/chat.js"></script>
+}
