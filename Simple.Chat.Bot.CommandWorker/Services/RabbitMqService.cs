@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Simple.Chat.Bot.CommandWorker.Helpers;
+using Simple.Chat.Bot.CommandWorker.Infrastructure.Commands;
 
 namespace Simple.Chat.Bot.CommandWorker.Services
 {
@@ -19,10 +20,9 @@ namespace Simple.Chat.Bot.CommandWorker.Services
     protected readonly IConnection _connection;
     protected readonly IModel _channel;
     protected readonly IConfiguration _configuration;
-    protected readonly IServiceProvider _serviceProvider;
     protected readonly ConnectionFactorySettings _connectionFactorySettings;
-
-    public RabbitMQService(IServiceProvider serviceProvider, IConfiguration configuration)
+    protected readonly ICommandProcessor _commandProcessor;
+    public RabbitMQService(IConfiguration configuration, ICommandProcessor commandProcessor)
     {
       // Opens the connections to RabbitMQ
       _configuration = configuration;
@@ -36,8 +36,7 @@ namespace Simple.Chat.Bot.CommandWorker.Services
       };
       _connection = _factory.CreateConnection();
       _channel = _connection.CreateModel();
-
-      _serviceProvider = serviceProvider;
+      _commandProcessor = commandProcessor;
     }
 
     public virtual void Connect()
@@ -47,7 +46,9 @@ namespace Simple.Chat.Bot.CommandWorker.Services
       var consumer = new EventingBasicConsumer(_channel);
       consumer.Received += delegate (object model, BasicDeliverEventArgs ea)
       {
-        SendResponse("I'm the bot");
+        var command = Encoding.UTF8.GetString(ea.Body.ToArray());
+        var response = _commandProcessor.GetCommandResponse(command);
+        SendResponse(response);
       };
       _channel.BasicConsume(queue: _connectionFactorySettings.CommandQueue, autoAck: true, consumer: consumer);
     }

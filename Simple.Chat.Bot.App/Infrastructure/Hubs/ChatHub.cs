@@ -39,8 +39,7 @@ namespace Simple.Chat.Bot.App.Infrastructure.Hubs
 
     private void SendCommand(string message)
     {
-      var command = CommandParser.GetCommand(message);
-      _rabbitMQService.SendCommand(command);
+      _rabbitMQService.SendCommand(message);
     }
 
     public async Task SendMessage(string message)

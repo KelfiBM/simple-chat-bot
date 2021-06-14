@@ -78,7 +78,9 @@ document
   .getElementById("sendMessageButton")
   .addEventListener("click", (event) => {
     let messageInput = document.getElementById("messageInput");
-    sendMessage(messageInput.value);
+    if(messageInput.value.length > 0){
+      sendMessage(messageInput.value);
+    }
     messageInput.value = "";
     event.preventDefault();
   });

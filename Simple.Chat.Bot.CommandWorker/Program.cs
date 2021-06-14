@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Simple.Chat.Bot.CommandWorker.Infrastructure.Commands;
 using Simple.Chat.Bot.CommandWorker.Services;
 
 namespace Simple.Chat.Bot.CommandWorker
@@ -16,6 +17,7 @@ namespace Simple.Chat.Bot.CommandWorker
             .ConfigureServices((hostContext, services) =>
             {
               services.AddSingleton<IRabbitMQService, RabbitMQService>();
+              services.AddTransient<ICommandProcessor, CommandProcessor>();
               services.AddHostedService<Worker>();
             });
   }
