@@ -8,7 +8,8 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SignalRChat.Hubs;
+using Simple.Chat.Bot.App.Infrastructure.CommandWorker;
+using Simple.Chat.Bot.App.Infrastructure.Hubs;
 
 namespace Simple.Chat.Bot.App
 {
@@ -27,10 +28,11 @@ namespace Simple.Chat.Bot.App
       services.AddControllersWithViews();
       services.AddRazorPages();
       services.AddSignalR();
+      services.AddSingleton<IRabbitMQService, RabbitMQService>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime lifetime)
     {
       if (env.IsDevelopment())
       {
@@ -58,6 +60,12 @@ namespace Simple.Chat.Bot.App
         endpoints.MapRazorPages();
         endpoints.MapHub<ChatHub>("/Home/Index");
       });
+      lifetime.ApplicationStarted.Register(() => RegisterCommandWorker(app.ApplicationServices));
+    }
+    public void RegisterCommandWorker(IServiceProvider serviceProvider)
+    {
+      var rabbitMQService = (IRabbitMQService)serviceProvider.GetService(typeof(IRabbitMQService));
+      rabbitMQService.Connect();
     }
   }
 }
