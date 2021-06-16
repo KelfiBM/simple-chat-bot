@@ -31,19 +31,26 @@ A simple live chat application with a chat bot
 * Update appSettings in Simple.Chat.Bot.App/appSettings.json and Simple.Chat.Bot.CommandWorker/appSettings.json to work with your RabbitMQ Server settings. By default, both points to the default RabbitMQ settings.
 * Open the root folder of the project with Visual Studio 2019 or VSCode with .Net 5 SDK installed.
 * Run Entity Framework Core migrations to restore de database. (SQL Server Express localdb is required)
+  * Open a terminal in the root folder and execute:
+  
+  ```shell
+  > cd Simple.Chat.Bot.App
+  > dotnet ef database update
+  ```
+  
 * With RabbitMQ running, execute both App and CommandWorker projects from Visual Studio 2019 IDE or following the next commands:
   * Open a terminal in the root folder and execute:
 
   ```shell
-  cd Simple.Chat.Bot.CommandWorker
-  dotnet run
+  > cd Simple.Chat.Bot.CommandWorker
+  > dotnet run
   ```
 
   * Open another terminal in the root folder and execute:
 
   ```shell
-  cd Simple.Chat.Bot.App
-  dotnet run
+  > cd Simple.Chat.Bot.App
+  > dotnet run
   ```
 
 * After having running both projects, open your browser in http://localhost:5000 or https://localhost:5001
